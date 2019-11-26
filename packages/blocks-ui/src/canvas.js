@@ -5,6 +5,7 @@ import parserJS from 'prettier/parser-babylon'
 
 import { useEditor } from './editor-context'
 import InlineRender from './inline-render'
+import { PreviewArea, Device } from './device-preview'
 
 const Wrap = props => (
   <div
@@ -17,6 +18,13 @@ const Wrap = props => (
     {...props}
   />
 )
+
+// TODO: replace with ThemeUI breakpoints
+const devices = [
+  { name: 'Mobile', width: 380 },
+  { name: 'Tablet', width: 720 },
+  { name: 'Desktop', width: 1200 }
+]
 
 export default ({ code, transformedCode, scope, theme }) => {
   const { mode } = useEditor()
@@ -38,6 +46,23 @@ export default ({ code, transformedCode, scope, theme }) => {
           })}
         </Styled.pre>
       </Wrap>
+    )
+  }
+
+  if (mode === 'viewports') {
+    return (
+      <PreviewArea>
+        {devices.map(device => (
+          <Device
+            key={device.name}
+            name={device.name}
+            width={device.width}
+            height={500}
+          >
+            <InlineRender scope={scope} code={transformedCode} theme={theme} />
+          </Device>
+        ))}
+      </PreviewArea>
     )
   }
 
